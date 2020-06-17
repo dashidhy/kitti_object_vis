@@ -172,10 +172,9 @@ def draw_lidar(
     Returns:
         fig: created or used fig
     """
-    # ind = (pc[:,2]< -1.65)
-    # pc = pc[ind]
+    
     pts_mode = "point"
-    print("====================", pc.shape)
+    
     if fig is None:
         fig = mlab.figure(
             figure=None, bgcolor=bgcolor, fgcolor=None, engine=None, size=(1600, 1000)
@@ -200,7 +199,7 @@ def draw_lidar(
     )
 
     # draw origin
-    mlab.points3d(0, 0, 0, color=(1, 1, 1), mode="sphere", scale_factor=0.2)
+    mlab.points3d(0, 0, 0, color=(0.5, 0.5, 0.5), mode="sphere", scale_factor=0.2)
 
     # draw axis
     axes = np.array(
@@ -232,83 +231,10 @@ def draw_lidar(
         figure=fig,
     )
 
-    # draw fov (todo: update to real sensor spec.)
-    fov = np.array(
-        [[20.0, 20.0, 0.0, 0.0], [20.0, -20.0, 0.0, 0.0]], dtype=np.float64  # 45 degree
-    )
-
-    mlab.plot3d(
-        [0, fov[0, 0]],
-        [0, fov[0, 1]],
-        [0, fov[0, 2]],
-        color=(1, 1, 1),
-        tube_radius=None,
-        line_width=1,
-        figure=fig,
-    )
-    mlab.plot3d(
-        [0, fov[1, 0]],
-        [0, fov[1, 1]],
-        [0, fov[1, 2]],
-        color=(1, 1, 1),
-        tube_radius=None,
-        line_width=1,
-        figure=fig,
-    )
-
-    # draw square region
-    TOP_Y_MIN = -20
-    TOP_Y_MAX = 20
-    TOP_X_MIN = 0
-    TOP_X_MAX = 40
-    #TOP_Z_MIN = -2.0
-    #TOP_Z_MAX = 0.4
-
-    x1 = TOP_X_MIN
-    x2 = TOP_X_MAX
-    y1 = TOP_Y_MIN
-    y2 = TOP_Y_MAX
-    mlab.plot3d(
-        [x1, x1],
-        [y1, y2],
-        [0, 0],
-        color=(0.5, 0.5, 0.5),
-        tube_radius=0.1,
-        line_width=1,
-        figure=fig,
-    )
-    mlab.plot3d(
-        [x2, x2],
-        [y1, y2],
-        [0, 0],
-        color=(0.5, 0.5, 0.5),
-        tube_radius=0.1,
-        line_width=1,
-        figure=fig,
-    )
-    mlab.plot3d(
-        [x1, x2],
-        [y1, y1],
-        [0, 0],
-        color=(0.5, 0.5, 0.5),
-        tube_radius=0.1,
-        line_width=1,
-        figure=fig,
-    )
-    mlab.plot3d(
-        [x1, x2],
-        [y2, y2],
-        [0, 0],
-        color=(0.5, 0.5, 0.5),
-        tube_radius=0.1,
-        line_width=1,
-        figure=fig,
-    )
-
     # mlab.orientation_axes()
     mlab.view(
         azimuth=180,
-        elevation=70,
+        elevation=45,
         focalpoint=[12.0909996, -1.04700089, -2.03249991],
         distance=62.0,
         figure=fig,
