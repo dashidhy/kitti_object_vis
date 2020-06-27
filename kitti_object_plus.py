@@ -21,7 +21,7 @@ care_types = ['Car', 'Pedestrian', 'Cyclist']
 class kitti_object(object):
     """Load and parse object data into a usable format."""
 
-    def __init__(self, root_dir, split='trainval', pred_dir=None):
+    def __init__(self, root_dir, split='trainval', pred_dir=None, pred_only=False):
         """root_dir contains training and testing folders"""
         self.root_dir = root_dir
         self.split = split
@@ -42,9 +42,19 @@ class kitti_object(object):
         if self.pred_dir is not None:
             if self.split not in os.path.basename(os.path.abspath(self.pred_dir)):
                 raise ValueError('Irregular name of prediction folder! Should include split name \"{}\" for consistency.'.format(self.split))
-
-        with open(self.split_file, 'r') as f:
-            self.sample_ids = [int(id) for id in f.read().splitlines()]
+        
+        self.pred_only = pred_only
+        if self.pred_only and self.pred_dir is not None:
+            pred_files = os.listdir(self.pred_dir)
+            self.sample_ids = []
+            for pred_file in pred_files:
+                if pred_file.endswith('.txt'):
+                    self.sample_ids.append(int(pred_file[:-4]))
+        else:
+            with open(self.split_file, 'r') as f:
+                self.sample_ids = [int(id) for id in f.read().splitlines()]
+         
+        self.sample_ids = sorted(self.sample_ids)
 
         self.subset_dir = os.path.join(self.root_dir , self.subset)
         self.image_dir = os.path.join(self.subset_dir, "image_2")
@@ -234,7 +244,7 @@ def show_lidar_with_depth(
             box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
             #print("box3d_pts_3d_velo:")
             #print(box3d_pts_3d_velo)
-            draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=color)
+            draw_gt_boxes3d([box3d_pts_3d_velo], fig=fig, color=color, label=obj.type)
             # Draw heading arrow
             _, ori3d_pts_3d = utils.compute_orientation_3d(obj, calib.P)
             ori3d_pts_3d_velo = calib.project_rect_to_velo(ori3d_pts_3d)
